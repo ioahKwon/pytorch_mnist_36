@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-#from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 from tensorboardX import SummaryWriter
 from torchvision import transforms, datasets
 
@@ -103,9 +103,12 @@ optim = torch.optim.Adam(params, lr=lr)
 
 writer = SummaryWriter(log_dir=log_dir)
 
+net, optim = load(ckpt_dir =ckpt_dir, net = net, optim=optim)
+
 ## 트레이닝 시작하기
-for epoch in range(1, num_epoch + 1):
-    net.train()
+with torch.no_grad():
+    # net.train()
+    net.eval()
 
     loss_arr = []
     acc_arr = []
@@ -117,22 +120,11 @@ for epoch in range(1, num_epoch + 1):
         output = net(input)
         pred = fn_pred(output)
 
-        optim.zero_grad()
-
         loss = fn_loss(output, label)
         acc = fn_acc(pred, label)
-
-        loss.backward()
-
-        optim.step()
 
         loss_arr += [loss.item()]
         acc_arr += [acc.item()]
 
-        print('TRAIN: EPOCH %04d/%04d | BATCH %04d/%04d | LOSS: %.4f | ACC %.4f' %
-              (epoch, num_epoch, batch, num_batch, np.mean(loss_arr), np.mean(acc_arr)))
-
-    writer.add_scalar('loss', np.mean(loss_arr), epoch)
-    writer.add_scalar('acc', np.mean(acc_arr), epoch)
-
-    save(ckpt_dir=ckpt_dir, net=net, optim=optim, epoch=epoch)
+        print('TEST: BATCH %04d/%04d | LOSS: %.4f | ACC %.4f' %
+              (batch, num_batch, np.mean(loss_arr), np.mean(acc_arr)))
