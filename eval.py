@@ -14,8 +14,8 @@ lr = 1e-3
 batch_size = 64
 num_epoch = 10
 
-ckpt_dir = './checkpoint'
-log_dir = './log'
+ckpt_dir = './checkpoint' #'./drive/My Drive/pytorch-mnist-36/checkpoint'
+log_dir = './log' #'./drive/My Drive/pytorch-mnist-36/log'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
